@@ -21,8 +21,7 @@ public class Main {
 		FileExecutor fileExecute = new FileExecutor();
 		
 		// requirement
-		Maze maze = new Maze();
-        maze = fileExecute.readMazeFromInputFile(inputMazeFileName);
+		Maze maze = fileExecute.readMazeFromInputFile(inputMazeFileName);
         
         GraphConverter graphConvert = new GraphConverter(maze);
         Graph graph = graphConvert.getGraph();
@@ -35,21 +34,21 @@ public class Main {
 		fileExecute.writeShortesPathOutputFile(shortestPathCalculator, outputShortestPathFileName);
 		
 		// test case
-		for (int i = 1; i <= 8; i++) {		
+		for (int i = 1; i <= 8; i++) {
 			String inputMazeFileNameTestCase = "./input/testcase"+i+".txt";
 			String outputDiagramFileNameTestCase = "./output/testcase"+i+"-diagram.txt";
 			String outputShortestPathFileNameTestCase = "./output/testcase"+i+"-result.txt";
-			
+
 			FileExecutor fileExecuteTest = new FileExecutor();
-			
+
 			Maze mazeTest = new Maze();
 			mazeTest = fileExecuteTest.readMazeFromInputFile(inputMazeFileNameTestCase);
-			
+
 			GraphConverter graphConvertTest = new GraphConverter(mazeTest);
 	        Graph graphTest = graphConvertTest.getGraph();
 
 	        ShortestPathCalculator shortestPathCalculatorTest = new ShortestPathCalculator(graphTest, mazeTest.getStartStationID(), mazeTest.getEndStationID());
-			
+
 	        fileExecuteTest.writeDiagramOutputFile(graphTest, outputDiagramFileNameTestCase);
 	        fileExecuteTest.writeShortesPathOutputFile(shortestPathCalculatorTest, outputShortestPathFileNameTestCase);
 		}

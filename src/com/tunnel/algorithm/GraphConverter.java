@@ -2,6 +2,7 @@ package com.tunnel.algorithm;
 
 import java.util.ArrayList;
 
+import com.tunnel.element.Edge;
 import com.tunnel.element.Graph;
 import com.tunnel.element.Maze;
 import com.tunnel.element.Vertex;
@@ -127,76 +128,92 @@ public class GraphConverter {
 			int stationBeginY = stationBegin.getY();
 			graph.addKeyStation(stationBegin.getVertexID());
 			ArrayList<Integer> availableDirectionsToMoveNextFromStation = findAvailableDirectionsFormStation(maze, stationBegin);
+
 			for (Vertex stationEnd : stationList) {
 				int stationEndX = stationEnd.getX();
 				int stationEndY = stationEnd.getY();
-				
-				boolean isEdgeExist = false;
 				
 				if(stationBeginX == stationEndX && stationBeginY == stationEndY) {
 					continue;
 				}
 				else {
-					
-					checkAllDirections: for (int directionToMoveNextFromStation : availableDirectionsToMoveNextFromStation) {
+
+					checkAllDirections:
+					for (int directionToMoveNextFromStation : availableDirectionsToMoveNextFromStation) {
+						boolean isEdgeExist = false;
 						int pointX = stationBegin.getX();
 						int pointY = stationBegin.getY();
-						
-						switch(directionToMoveNextFromStation) {
-						case LEFT:
-							pointX = pointX > 0 ? pointX - 1 : pointX;
-							break;
-						case RIGHT:
-							pointX = pointX < maze.getNumberOfX() - 1 ? pointX + 1 : pointX;
-							break;
-						case UP:
-							pointY = pointY > 0 ? pointY - 1 : pointY;
-							break;
-						case DOWN:
-							pointY = pointY < maze.getNumberOfY() - 1 ? pointY + 1 : pointY;
-							break;
+						int weight = 0;
+
+						switch (directionToMoveNextFromStation) {
+							case LEFT:
+								pointX = pointX > 0 ? pointX - 1 : pointX;
+								weight++;
+								break;
+							case RIGHT:
+								pointX = pointX < maze.getNumberOfX() - 1 ? pointX + 1 : pointX;
+								weight++;
+								break;
+							case UP:
+								pointY = pointY > 0 ? pointY - 1 : pointY;
+								weight++;
+								break;
+							case DOWN:
+								pointY = pointY < maze.getNumberOfY() - 1 ? pointY + 1 : pointY;
+								weight++;
+								break;
 						}
 						boolean stopMoving = false;
 						int previousMoveDirection = directionToMoveNextFromStation;
-						
+
 						do {
 							int directionToMove = findAvailableDirectionsFormPointToMove(maze, pointX, pointY, previousMoveDirection);
-							
-							if(!isStation(maze, pointX, pointY)) {
-								switch(directionToMove) {
-								case LEFT:
-									pointX = pointX > 0 ? pointX - 1 : pointX;
-									break;
-								case RIGHT:
-									pointX = pointX < maze.getNumberOfX() - 1 ? pointX + 1 : pointX;
-									break;
-								case UP:
-									pointY = pointY > 0 ? pointY - 1 : pointY;
-									break;
-								case DOWN:
-									pointY = pointY < maze.getNumberOfY() - 1 ? pointY + 1 : pointY;
-									break;
+
+							if (!isStation(maze, pointX, pointY)) {
+								switch (directionToMove) {
+									case LEFT:
+										pointX = pointX > 0 ? pointX - 1 : pointX;
+										weight++;
+										break;
+									case RIGHT:
+										pointX = pointX < maze.getNumberOfX() - 1 ? pointX + 1 : pointX;
+										weight++;
+										break;
+									case UP:
+										pointY = pointY > 0 ? pointY - 1 : pointY;
+										weight++;
+										break;
+									case DOWN:
+										pointY = pointY < maze.getNumberOfY() - 1 ? pointY + 1 : pointY;
+										weight++;
+										break;
 								}
 								previousMoveDirection = directionToMove;
 							}
-							
-							if(isStation(maze, pointX, pointY)) {
-								if(pointX == stationEndX && pointY == stationEndY) {
+
+							if (isStation(maze, pointX, pointY)) {
+								if (pointX == stationEndX && pointY == stationEndY) {
 									isEdgeExist = true;
-									break checkAllDirections;
 								}
-								else {
-									stopMoving = true;
+								stopMoving = true;
+							}
+
+						}
+						while (!stopMoving);
+
+						if(isEdgeExist) {
+							Edge edge = new Edge(stationBegin, stationEnd);
+							edge.setWeight(weight);
+							if(graph.isEdgeAddedForStation(edge)) {
+								if (weight < graph.getWeightOfEdgeFromEdgeListOfStation(edge)) {
+									graph.updateEdgeOfStation(edge);
 								}
 							}
-							
+							else {
+								graph.addEdgeToStation(stationBegin, edge);
+							}
 						}
-						while(!stopMoving);
 					}
-				}
-				
-				if(isEdgeExist) {
-					graph.addEdgeToStation(stationBegin, stationEnd);
 				}
 			}
 		}

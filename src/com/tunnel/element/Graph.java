@@ -20,16 +20,62 @@ public class Graph {
 		this.adjacencyVertices = adjacencyVertices;
 	}
 
-	public void addKeyStation(Integer vertex) {
-	    this.adjacencyVertices.putIfAbsent(vertex, new ArrayList<>());
+	public void addKeyStation(Integer vertexID) {
+	    this.adjacencyVertices.putIfAbsent(vertexID, new ArrayList<>());
 	}
 	
 	public void addEdgeToStation(Vertex mainStation, Vertex concernStaion) {
-		adjacencyVertices.get(mainStation.getVertexID()).add(new Edge(mainStation, concernStaion));
+		this.adjacencyVertices.get(mainStation.getVertexID()).add(new Edge(mainStation, concernStaion));
 	}
-	
+
 	public void addEdgeToStation(Vertex mainStation, Edge edge) {
-		adjacencyVertices.get(mainStation.getVertexID()).add(edge);
+		this.adjacencyVertices.get(mainStation.getVertexID()).add(edge);
+	}
+
+	public ArrayList<Edge> getEdgeListByStation(Vertex mainStation) {
+		ArrayList<Edge> edgeListOfStation = new ArrayList<>();
+		edgeListOfStation.addAll(this.adjacencyVertices.get(mainStation.getVertexID()));
+		return edgeListOfStation;
+	}
+
+	public boolean isEdgeAddedForStation(Edge edge) {
+		ArrayList<Edge> edgeListOfStaion = this.getEdgeListByStation(edge.getFirstVertex());
+		if(edgeListOfStaion.size() > 0) {
+			for(int i = 0; i < edgeListOfStaion.size(); i++) {
+				if (edge.getFirstVertex().getVertexID() == edgeListOfStaion.get(i).getFirstVertex().getVertexID()
+				&& edge.getSecondVertex().getVertexID() == edgeListOfStaion.get(i).getSecondVertex().getVertexID()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public void updateEdgeOfStation(Edge edge) {
+		ArrayList<Edge> edgeListOfStaion = this.getEdgeListByStation(edge.getFirstVertex());
+		if(edgeListOfStaion.size() > 0) {
+			for(int i = 0; i < edgeListOfStaion.size(); i++) {
+				if (edge.getFirstVertex().getVertexID() == edgeListOfStaion.get(i).getFirstVertex().getVertexID()
+						&& edge.getSecondVertex().getVertexID() == edgeListOfStaion.get(i).getSecondVertex().getVertexID()) {
+					this.adjacencyVertices.get(edge.getFirstVertex().getVertexID()).set(i, edge);
+				}
+			}
+		}
+	}
+
+	public int getWeightOfEdgeFromEdgeListOfStation(Edge edge) {
+		int weight = 0;
+		ArrayList<Edge> edgeListOfStaion = this.getEdgeListByStation(edge.getFirstVertex());
+		if(edgeListOfStaion.size() > 0) {
+			for(int i = 0; i < edgeListOfStaion.size(); i++) {
+				Edge considerEdge = edgeListOfStaion.get(i);
+				if (edge.getFirstVertex().getVertexID() == considerEdge.getFirstVertex().getVertexID()
+						&& edge.getSecondVertex().getVertexID() == considerEdge.getSecondVertex().getVertexID()) {
+					weight = considerEdge.getWeight();
+				}
+			}
+		}
+		return weight;
 	}
 	
 	@Override

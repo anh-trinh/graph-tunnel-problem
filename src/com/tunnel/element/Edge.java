@@ -14,7 +14,6 @@ public class Edge implements Comparable<Edge> {
 	public Edge(Vertex firstVertex, Vertex secondVertex) {
 		this.firstVertex = firstVertex;
 		this.secondVertex = secondVertex;
-		setWeight(firstVertex, secondVertex);
 	}
 	
 	public Edge(Vertex firstVertex, Vertex secondVertex, int weight) {
@@ -44,15 +43,6 @@ public class Edge implements Comparable<Edge> {
 	}
 	
 	public void setWeight(int weight) {
-		this.weight = weight;
-	}
-	
-	private void setWeight(Vertex firstVertex, Vertex secondVertex) {
-		int weight;
-		int distanceX = Math.abs(firstVertex.getX() - secondVertex.getX());
-		int distanceY = Math.abs(firstVertex.getY() - secondVertex.getY());
-		
-		weight = distanceX + distanceY;
 		this.weight = weight;
 	}
 	
